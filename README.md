@@ -1,0 +1,2 @@
+# nix-templates
+flake.nixのテンプレートです。
