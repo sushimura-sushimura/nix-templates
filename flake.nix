@@ -1,28 +1,36 @@
 {
-  description = "My personal Nix Flake templates.";
+  description = "A collection of Nix flake templates";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    # 既存のinputsはそのまま
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    {
-      templates = {
-        nextjs-app = {
-          description = "A basic Next.js app development environment.";
-          path = ./nextjs-app-template;
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+      {
+        # ここにテンプレートを定義します
+        templates = {
+          # java-maven-app-templateという名前でテンプレートを公開
+          java-maven-app-template = {
+            description = "A simple Java Maven application template.";
+            path = ./java-maven-app-template;
+          };
+          # 他のテンプレートもここに追加できます
+          nextjs-app-template = {
+            description = "A Next.js application template.";
+            path = ./nextjs-app-template;
+          };
         };
 
-        java-maven-app = {
-          description = "A basic Java/Maven development environment.";
-          path = ./java-maven-app-template;
+        # devShellsなどの他のアウトプットはここに追加できます
+        devShells.default = pkgs.mkShell {
+          # ...
         };
-
-        java-gradle-app = {
-          description = "A basic Java/Gradle development environment.";
-          path = ./java-gradle-app-template;
-        };
-      };
-    };
+      }
+    );
 }
